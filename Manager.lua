@@ -4,10 +4,10 @@ local InterfaceManager = {} do
 	InterfaceManager.Folder = "FluentRenewedSettings"
 
     InterfaceManager.Settings = {
-        Theme = "Honey",
+        Theme = "Dark",
         Acrylic = true,
-        Transparency = false,
-        MenuKeybind = Enum.KeyCode.LeftControl
+        Transparency = true,
+        MenuKeybind = Enum.KeyCode.RightControl
     }
 
     function InterfaceManager:SetFolder(folder)
@@ -19,7 +19,7 @@ local InterfaceManager = {} do
 		self.Library = library
 
 		InterfaceManager.Settings = {
-			Theme = self.Library.Theme or "Darker",
+			Theme = self.Library.Theme or "Dark",
 			Acrylic = self.Library.UseAcrylic or true,
 			Transparency = self.Library.Transparency or true,
 			MenuKeybind = self.Library.MinimizeKey or Enum.KeyCode.RightControl
