@@ -1,13 +1,12 @@
 local httpService = game:GetService("HttpService")
 
 local InterfaceManager = {} do
-	InterfaceManager.Folder = "FluentRenewedSettings"
-
+	InterfaceManager.Folder = "FluentSettings"
     InterfaceManager.Settings = {
         Theme = "Dark",
         Acrylic = true,
         Transparency = true,
-        MenuKeybind = Enum.KeyCode.RightControl
+        MenuKeybind = "RightControl"
     }
 
     function InterfaceManager:SetFolder(folder)
@@ -17,26 +16,18 @@ local InterfaceManager = {} do
 
     function InterfaceManager:SetLibrary(library)
 		self.Library = library
-
-		InterfaceManager.Settings = {
-			Theme = self.Library.Theme or "Dark",
-			Acrylic = self.Library.UseAcrylic or true,
-			Transparency = self.Library.Transparency or true,
-			MenuKeybind = self.Library.MinimizeKey or Enum.KeyCode.RightControl
-		}
 	end
 
     function InterfaceManager:BuildFolderTree()
 		local paths = {}
 
 		local parts = self.Folder:split("/")
-
 		for idx = 1, #parts do
 			paths[#paths + 1] = table.concat(parts, "/", 1, idx)
 		end
-		
-		paths[#paths + 1] = self.Folder
-		paths[#paths + 1] = `{self.Folder}/settings`
+
+		table.insert(paths, self.Folder)
+		table.insert(paths, self.Folder .. "/ZAHUB")
 
 		for i = 1, #paths do
 			local str = paths[i]
@@ -47,12 +38,11 @@ local InterfaceManager = {} do
 	end
 
     function InterfaceManager:SaveSettings()
-        writefile(`{self.Folder}/options.json`, httpService:JSONEncode(InterfaceManager.Settings))
+        writefile(self.Folder .. "/options.json", httpService:JSONEncode(InterfaceManager.Settings))
     end
 
     function InterfaceManager:LoadSettings()
-        local path = `{self.Folder}/options.json`
-
+        local path = self.Folder .. "/options.json"
         if isfile(path) then
             local data = readfile(path)
             local success, decoded = pcall(httpService.JSONDecode, httpService, data)
@@ -67,7 +57,6 @@ local InterfaceManager = {} do
 
     function InterfaceManager:BuildInterfaceSection(tab)
         assert(self.Library, "Must set InterfaceManager.Library")
-
 		local Library = self.Library
         local Settings = InterfaceManager.Settings
 
@@ -113,17 +102,11 @@ local InterfaceManager = {} do
 			end
 		})
 	
-		local MenuKeybind = section:AddKeybind("MenuKeybind", {
-			Title = "Minimize Bind", 
-			Default = Settings.MenuKeybind
-		})
-
+		local MenuKeybind = section:AddKeybind("MenuKeybind", { Title = "Minimize Bind", Default = Settings.MenuKeybind })
 		MenuKeybind:OnChanged(function()
 			Settings.MenuKeybind = MenuKeybind.Value
-
             InterfaceManager:SaveSettings()
 		end)
-
 		Library.MinimizeKeybind = MenuKeybind
     end
 end
